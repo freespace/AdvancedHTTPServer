@@ -39,7 +39,7 @@ FILE_CONFIG = """
 [server]
 ip = 0.0.0.0
 port = 8080
-web_root = /var/www/html
+web_root = .
 list_directories = True
 # Set an ssl_cert to enable SSL
 # ssl_cert = /path/to/cert.pem
@@ -275,6 +275,7 @@ def build_server_from_argparser(description=None, server_klass=None, handler_kla
 	parser.add_argument('--log-file', dest='log_file', help='log information to a file')
 	parser.add_argument('--no-threads', dest='use_threads', action='store_false', default=True, help='disable threading')
 	parser.add_argument('--password', dest='password', help='password to use for basic authentication')
+	parser.add_argument('--username', dest='username', help='username to use for basic authentication')
 	ssl_group = parser.add_argument_group('ssl options')
 	ssl_group.add_argument('--ssl-cert', dest='ssl_cert', help='the ssl cert to use')
 	ssl_group.add_argument('--ssl-key', dest='ssl_key', help='the ssl key to use')
@@ -314,8 +315,8 @@ def build_server_from_argparser(description=None, server_klass=None, handler_kla
 		)
 		server.serve_files_root = arguments.web_root
 
-	if arguments.password:
-		server.auth_add_creds('', arguments.password)
+	if arguments.password and arguments.username:
+		server.auth_add_creds(arguments.username, arguments.password)
 	return server
 
 def build_server_from_config(config, section_name, server_klass=None, handler_klass=None):
