@@ -910,9 +910,6 @@ class RequestHandler(http.server.BaseHTTPRequestHandler, object):
       self.send_header('Content-Disposition', 'attachment; filename=' + file_name)
     self.send_header('Last-Modified', self.date_time_string(fs.st_mtime))
 
-    if self.__config['CORS_allow_origin'] is not None:
-      self.send_header('Access-Control-Allow-Origin', self.__config['CORS_allow_origin'])
-
     self.end_headers()
     shutil.copyfileobj(file_obj, self.wfile)
     file_obj.close()
@@ -1127,6 +1124,9 @@ class RequestHandler(http.server.BaseHTTPRequestHandler, object):
     return
 
   def end_headers(self):
+    if self.__config['CORS_allow_origin'] is not None:
+      self.send_header('Access-Control-Allow-Origin', self.__config['CORS_allow_origin'])
+
     super(RequestHandler, self).end_headers()
     self.headers_active = False
     if self.command == 'HEAD':
